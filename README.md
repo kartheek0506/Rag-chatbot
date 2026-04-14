@@ -1,6 +1,3 @@
-Here is a **high-quality, recruiter-level README** tailored exactly to your project. You can **copy-paste directly into `README.md`**.
-
----
 
 # 🚀 RAG Chatbot using FastAPI, Pinecone & LLM
 
