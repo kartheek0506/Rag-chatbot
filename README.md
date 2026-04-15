@@ -209,6 +209,25 @@ This project demonstrates a **production-style RAG pipeline**, combining:
 
 ---
 
+## 🧩 Architecture Diagram
+
+The following diagram illustrates the end-to-end RAG pipeline:
+
+![Architecture](assets/architecture.png)
+
+## 💬 UI Preview
+
+![UI](Rag_ui.png)
+
+## 🧪 Example
+
+Query: What is git init?
+
+Answer: Initialize an existing directory as a Git repository.
+
+Confidence: 0.61  
+Source: git-cheat-sheet-education.pdf
+
 ## 📬 Contact
 
 For queries or collaboration:
