@@ -47,4 +47,4 @@ with gr.Blocks() as demo:
     msg.submit(chat_fn, [msg, chatbot], [msg, chatbot])
     clear.click(lambda: [], None, chatbot, queue=False)
 
-demo.launch()
+demo.launch(server_name="0.0.0.0", server_port=7860)
