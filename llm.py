@@ -1,27 +1,21 @@
-from dotenv import load_dotenv
 import os
 from groq import Groq
+from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
-# Initialize client
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 
-def generate_answer(contexts, query):
+def generate_answer(query, context):
     try:
-        # 🔥 Combine retrieved chunks
-        context = "\n\n".join(contexts).strip()
-
-        # 🔥 Strong prompt (fixed hallucination issue)
         prompt = f"""
-You are a strict assistant.
+You are an AI assistant.
 
-ONLY answer using the provided context.
-If the answer exists in the context, answer directly.
-DO NOT say "not found" if relevant information is present.
-Be concise.
+Answer the question ONLY using the given context.
+
+If the context does not contain relevant information, say:
+"I don't have enough information."
 
 Context:
 {context}
@@ -29,19 +23,20 @@ Context:
 Question:
 {query}
 
-Answer:
+Answer clearly in 2-3 sentences.
+Do NOT return single words or SQL keywords.
 """
 
-        # 🔥 Call Groq LLM
         response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",  # ✅ keep this if it works in your account
+            model="llama3-8b-8192",
             messages=[
                 {"role": "user", "content": prompt}
-            ]
+            ],
+            temperature=0.3
         )
 
         return response.choices[0].message.content.strip()
 
     except Exception as e:
         print("LLM ERROR:", e)
-        return "Error generating answer"
+        return "Error generating response."
