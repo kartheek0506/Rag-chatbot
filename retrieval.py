@@ -1,30 +1,62 @@
-from sentence_transformers import SentenceTransformer
 from vector_store import index
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+# -------------------------
+# 🔹 Lightweight embedding
+# -------------------------
+def simple_embedding(text, dim=384):
+    base = float(len(text) % 1000) / 1000.0
+    return [base + (i % 7) * 0.001 for i in range(dim)]
 
 
-def retrieve(query):
-    query = query.lower()
+# -------------------------
+# 🔹 Retrieval function
+# -------------------------
+def retrieve(query, top_k=3):
+    try:
+        # Generate embedding for query
+        query_embedding = simple_embedding(query)
 
-    query_vector = model.encode(query).tolist()
+        # Query Pinecone
+        results = index.query(
+            vector=query_embedding,
+            top_k=top_k,
+            include_metadata=True
+        )
 
-    results = index.query(
-        vector=query_vector,
-        top_k=1,
-        include_metadata=True
-    )
+        matches = results.get("matches", [])
 
-    contexts = []
-    sources = []
-    scores = []
+        if not matches:
+            return {
+                "context": "",
+                "confidence": 0,
+                "sources": []
+            }
 
-    for match in results["matches"]:
-        contexts.append(match["metadata"]["text"])
-        sources.append(match["metadata"].get("source", "unknown"))
-        scores.append(match["score"])
+        # Extract context
+        context = "\n".join(
+            [match["metadata"].get("text", "") for match in matches]
+        )
 
-    # ✅ ADD HERE (after scores is filled)
-    print("Scores:", scores)
+        # Confidence (average score)
+        confidence = sum(
+            [match.get("score", 0) for match in matches]
+        ) / len(matches)
 
-    return contexts, scores, sources
+        # Sources
+        sources = list(set(
+            [match["metadata"].get("source", "unknown") for match in matches]
+        ))
+
+        return {
+            "context": context,
+            "confidence": confidence,
+            "sources": sources
+        }
+
+    except Exception as e:
+        print("RETRIEVAL ERROR:", e)
+        return {
+            "context": "",
+            "confidence": 0,
+            "sources": []
+        }

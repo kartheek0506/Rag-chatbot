@@ -5,6 +5,9 @@ from pinecone import Pinecone
 # Load environment variables
 load_dotenv()
 
+# 🔍 Debug (temporary)
+print("PINECONE_API_KEY:", os.getenv("PINECONE_API_KEY"))
+
 # Initialize Pinecone
 pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 
@@ -12,12 +15,9 @@ pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 index = pc.Index("rag-index")
 
 
- 
-
-
 def upsert_embeddings(chunks, embeddings, filename):
     try:
-        print("VECTOR STORE FILENAME:", filename)  # ✅ debug
+        print("VECTOR STORE FILENAME:", filename)
 
         vectors = []
 
@@ -27,13 +27,11 @@ def upsert_embeddings(chunks, embeddings, filename):
                 "values": emb,
                 "metadata": {
                     "text": chunk,
-                    "source": filename  # ✅ CRITICAL LINE
+                    "source": filename
                 }
             })
 
-        # Upload to Pinecone
         index.upsert(vectors)
-
         print(f"Inserted {len(vectors)} vectors into Pinecone")
 
     except Exception as e:
