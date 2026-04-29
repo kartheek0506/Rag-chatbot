@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 pinecone-client
-sentence-transformers
+
 pydantic
 python-multipart
 PyPDF2
