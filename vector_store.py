@@ -1,6 +1,6 @@
-from pinecone import Pinecone
-import os
 from dotenv import load_dotenv
+import os
+from pinecone import Pinecone
 
 # Load environment variables
 load_dotenv()
